@@ -3,6 +3,9 @@
 #[cfg(feature = "writer")]
 extern crate alloc;
 
+#[cfg(feature = "writer")]
+pub use miniz_oxide::deflate::CompressionLevel;
+
 mod num;
 use num::*;
 
@@ -62,12 +65,12 @@ pub struct ArchiveWriterError;
 #[cfg(feature = "writer")]
 pub struct ArchiveBuilder {
     data: alloc::vec::Vec<u8>,
-    compression_level: miniz_oxide::deflate::CompressionLevel,
+    compression_level: CompressionLevel,
 }
 
 #[cfg(feature = "writer")]
 impl ArchiveBuilder {
-    pub fn new(compression_level: miniz_oxide::deflate::CompressionLevel) -> Self {
+    pub fn new(compression_level: CompressionLevel) -> Self {
         Self {
             data: alloc::vec::Vec::new(),
             compression_level,
