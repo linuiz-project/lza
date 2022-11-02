@@ -103,7 +103,7 @@ impl ArchiveBuilder {
         Ok(())
     }
 
-    pub fn into_data(self) -> alloc::vec::Vec<u8> {
+    pub fn take_data(self) -> alloc::vec::Vec<u8> {
         self.data
     }
 }
