@@ -10,5 +10,5 @@ version = "*"
 optional = true
 
 [features]
-default = ["writer"]
-writer = ["miniz_oxide"]
+default = ["builder"]
+builder = ["miniz_oxide"]

@@ -1,9 +1,9 @@
 #![no_std]
 
-#[cfg(feature = "writer")]
+#[cfg(feature = "builder")]
 extern crate alloc;
 
-#[cfg(feature = "writer")]
+#[cfg(feature = "builder")]
 pub use miniz_oxide::deflate::CompressionLevel;
 
 mod num;
@@ -59,16 +59,17 @@ impl<'a> Iterator for ArchiveReader<'a> {
     }
 }
 
-#[cfg(feature = "writer")]
-pub struct ArchiveWriterError;
+#[cfg(feature = "builder")]
+#[derive(Debug)]
+pub struct ArchiveBuilderError;
 
-#[cfg(feature = "writer")]
+#[cfg(feature = "builder")]
 pub struct ArchiveBuilder {
     data: alloc::vec::Vec<u8>,
     compression_level: CompressionLevel,
 }
 
-#[cfg(feature = "writer")]
+#[cfg(feature = "builder")]
 impl ArchiveBuilder {
     pub fn new(compression_level: CompressionLevel) -> Self {
         Self {
@@ -77,9 +78,9 @@ impl ArchiveBuilder {
         }
     }
 
-    pub fn push_data(&mut self, name: &str, data: &[u8]) -> Result<(), ArchiveWriterError> {
+    pub fn push_data(&mut self, name: &str, data: &[u8]) -> Result<(), ArchiveBuilderError> {
         if name.len() > 24 {
-            return Err(ArchiveWriterError);
+            return Err(ArchiveBuilderError);
         }
 
         let name_bytes = {
