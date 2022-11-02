@@ -30,8 +30,12 @@ impl Header {
     }
 }
 
-pub struct ArchiveReader<'a> {
-    data: &'a [u8],
+pub struct ArchiveReader<'a>(&'a [u8]);
+
+impl<'a> ArchiveReader<'a> {
+    pub fn new(data: &'a [u8]) -> Self {
+        Self(data)
+    }
 }
 
 impl<'a> Iterator for ArchiveReader<'a> {
@@ -40,18 +44,18 @@ impl<'a> Iterator for ArchiveReader<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         use core::mem::size_of;
 
-        if self.data.is_empty() {
+        if self.0.is_empty() {
             None
         } else {
-            let header_bytes = &self.data[..size_of::<Header>()];
-            self.data = &self.data[size_of::<Header>()..];
+            let header_bytes = &self.0[..size_of::<Header>()];
+            self.0 = &self.0[size_of::<Header>()..];
 
             bytemuck::try_from_bytes::<Header>(header_bytes)
                 .ok()
                 .filter(|header| header.magic == Header::MAGIC)
                 .map(|header| {
-                    let section_data = &self.data[..(header.next_file.get() as usize)];
-                    self.data = &self.data[(header.next_file.get() as usize)..];
+                    let section_data = &self.0[..(header.next_file.get() as usize)];
+                    self.0 = &self.0[(header.next_file.get() as usize)..];
 
                     (*header, section_data)
                 })
