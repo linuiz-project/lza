@@ -60,13 +60,13 @@ impl<'a> Iterator for ArchiveReader<'a> {
 pub struct ArchiveWriterError;
 
 #[cfg(feature = "writer")]
-pub struct ArchiveWriter {
+pub struct ArchiveBuilder {
     data: alloc::vec::Vec<u8>,
     compression_level: miniz_oxide::deflate::CompressionLevel,
 }
 
 #[cfg(feature = "writer")]
-impl ArchiveWriter {
+impl ArchiveBuilder {
     pub fn new(compression_level: miniz_oxide::deflate::CompressionLevel) -> Self {
         Self {
             data: alloc::vec::Vec::new(),
@@ -101,5 +101,9 @@ impl ArchiveWriter {
         self.data.extend(compressed_bytes.iter());
 
         Ok(())
+    }
+
+    pub fn into_data(self) -> alloc::vec::Vec<u8> {
+        self.data
     }
 }
