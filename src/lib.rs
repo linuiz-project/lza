@@ -75,8 +75,9 @@ impl<'a> Iterator for ArchiveReader<'a> {
                 .ok()
                 .filter(|header| header.magic == Header::MAGIC)
                 .map(|header| {
-                    let section_data = &self.0[..(header.next_file.get() as usize)];
-                    self.0 = &self.0[(header.next_file.get() as usize)..];
+                    let next_file = header.next_file.get() as usize;
+                    let section_data = &self.0[..next_file];
+                    self.0 = &self.0[next_file..];
 
                     (*header, section_data)
                 })
