@@ -103,7 +103,11 @@ impl ArchiveBuilder {
         }
     }
 
-    pub fn push_data(&mut self, name: &str, data: &[u8]) -> Result<(), ArchiveBuilderError> {
+    pub fn push_data(
+        &mut self,
+        name: &str,
+        data: &[u8],
+    ) -> Result<(Header, alloc::vec::Vec<u8>), ArchiveBuilderError> {
         if name.len() > 24 {
             return Err(ArchiveBuilderError);
         }
@@ -126,10 +130,10 @@ impl ArchiveBuilder {
         };
         let header_bytes = bytemuck::bytes_of(&header);
 
-        self.data.extend(header_bytes.iter());
+        self.data.extend(header_bytes);
         self.data.extend(compressed_bytes.iter());
 
-        Ok(())
+        Ok((header, compressed_bytes))
     }
 
     pub fn take_data(self) -> alloc::vec::Vec<u8> {
