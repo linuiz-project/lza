@@ -46,7 +46,7 @@ impl core::fmt::Debug for Header {
             .field("Magic", &core::str::from_utf8(&self.magic))
             .field("Name", &self.name())
             .field("Length", &self.len().get())
-            .field("Next File", &self.next_file)
+            .field("Next File", &self.next_file.get())
             .finish()
     }
 }
