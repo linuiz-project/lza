@@ -14,8 +14,8 @@ use num::*;
 pub struct Header {
     magic: [u8; 16],
     name: [u8; 24],
-    pub len: LittleEndianU64,
-    pub next_file: LittleEndianU64,
+    len: LittleEndianU64,
+    next_file: LittleEndianU64,
 }
 
 unsafe impl bytemuck::AnyBitPattern for Header {}
@@ -25,8 +25,14 @@ unsafe impl bytemuck::NoUninit for Header {}
 impl Header {
     const MAGIC: [u8; 16] = *b"LINUIZARCHIVEV01";
 
-    pub fn name(&self) -> Result<&str, core::str::Utf8Error> {
+    pub fn name(&self) -> &str {
         core::str::from_utf8(&self.name)
+            .map(|name| name.trim_end_matches('\0'))
+            .unwrap_or("Unknown")
+    }
+
+    pub fn len(&self) -> usize {
+        self.len.get() as usize
     }
 }
 
