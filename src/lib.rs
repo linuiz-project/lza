@@ -3,6 +3,8 @@
 #[cfg(feature = "builder")]
 extern crate alloc;
 
+use core::num::NonZeroUsize;
+
 #[cfg(feature = "builder")]
 pub use miniz_oxide::deflate::CompressionLevel;
 
@@ -31,8 +33,9 @@ impl Header {
             .unwrap_or("Unknown")
     }
 
-    pub fn len(&self) -> usize {
-        self.len.get() as usize
+    pub fn len(&self) -> NonZeroUsize {
+        // ### Safety: Value is known to be non-zero.
+        unsafe { NonZeroUsize::new_unchecked(self.len.get() as usize) }
     }
 }
 
