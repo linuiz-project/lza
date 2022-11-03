@@ -11,7 +11,7 @@ pub use miniz_oxide::deflate::CompressionLevel;
 mod num;
 use num::*;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 #[repr(C, packed)]
 pub struct Header {
     magic: [u8; 16],
@@ -36,6 +36,18 @@ impl Header {
     pub fn len(&self) -> NonZeroUsize {
         // ### Safety: Value is known to be non-zero.
         unsafe { NonZeroUsize::new_unchecked(self.len.get() as usize) }
+    }
+}
+
+impl core::fmt::Debug for Header {
+    fn fmt(&self, formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        formatter
+            .debug_struct("Header")
+            .field("Magic", &core::str::from_utf8(&self.magic))
+            .field("Name", &self.name())
+            .field("Length", &self.len().get())
+            .field("Next File", &self.next_file)
+            .finish()
     }
 }
 
